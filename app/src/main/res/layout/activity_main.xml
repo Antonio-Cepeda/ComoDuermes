@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <LinearLayout tools:context=".Actividades.MainActivity"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/linear"
+    xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoLuz"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="150dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoContadorLuz"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="50dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoProximidad"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="50dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoContadorProximidad"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="50dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoAcelerometro"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="50dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textoGiroscopio"
+        android:textSize="24sp"
+        android:textColor="#050505"
+        android:layout_marginTop="50dp"/>
+
+</LinearLayout>
