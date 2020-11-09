@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ComoDuermes</string>
+    <string name="ButtonStart">Empiezo a dormir</string>
+    <string name="ButtonStop">Dejo de dormir</string>
 </resources>

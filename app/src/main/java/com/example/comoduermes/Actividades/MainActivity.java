@@ -1,25 +1,22 @@
 package com.example.comoduermes.Actividades;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.comoduermes.R;
 
-import java.lang.reflect.Array;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -42,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // Variables
     int segundos, minutos, horas = 0;
     Calendar calendario = Calendar.getInstance();
+    static List<LocalTime> historialLuzEncendida = new ArrayList<LocalTime>();
+    static List<LocalTime> historialLuzApagada = new ArrayList<LocalTime>();
+
+    static float lux;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,18 +74,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
            System.out.print("no hay sensor");*/
 
 
-        sensorEventListener = new SensorEventListener() {
+        if (MainActivity2.funcionando == true) {
 
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
+            sensorEventListener = new SensorEventListener() {
 
-                // Sensor LUZ
-                if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-                    float lux = sensorEvent.values[0];
-                    if (sensorEvent.values[0] < 15) {
-                        tvLuz.setText("Numero de luxes:" + lux);
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onSensorChanged(SensorEvent sensorEvent) {
 
-                        //getWindow().getDecorView().setBackgroundColor(Color.BLUE);
+                    // Sensor LUZ
+                    if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+                        lux = sensorEvent.values[0];
+                        if (sensorEvent.values[0] < 15) {
+                            tvLuz.setText("Numero de luxes:" + lux);
+                            //historialLuzApagada.add(LocalTime.now());
+                            //getWindow().getDecorView().setBackgroundColor(Color.BLUE);
 
                        /*segundos++;
                         if (segundos == 60) {
@@ -96,25 +100,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             horas += 1;
                         }
                        tvContadorLuz.setText();*/
-                    } else  {
-                        tvLuz.setText("Numero de luxes: " + lux);
-                        //getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-                        //segundos = 0;
-                        // minutos = 0;
-                        // horas = 0;
-                        //tvContadorLuz.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
+                        } else {
+                            tvLuz.setText("Numero de luxes: " + lux);
+                            //historialLuzEncendida.add(LocalTime.now());
+                            //getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+                            //segundos = 0;
+                            // minutos = 0;
+                            // horas = 0;
+                            //tvContadorLuz.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
+                        }
                     }
-                }
+                    //tvContadorLuz.setText("La luz se ha encendido a las: " + historialLuzEncendida.get(0) + " La luz se ha pagado a las: " + historialLuzApagada.get(0));
 
 
-                // Sensor PROXIMIDAD
-                if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                    // Sensor PROXIMIDAD
+               /* if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                     float distancia = sensorEvent.values[0];
                     if (sensorEvent.values[0] < 3.5) {
                         tvProximidad.setText("Numero de cm: " + distancia);
                         //getWindow().getDecorView().setBackgroundColor(Color.BLUE);
 
-                        /*segundos++;
+                        segundos++;
                         if (segundos == 60) {
                             segundos = 0;
                             minutos += 1;
@@ -123,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             minutos = 0;
                             horas += 1;
                         }
-                        tvContadorProximidad.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");*/
+                        tvContadorProximidad.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
                     } else {
                         tvProximidad.setText("Numero de cm: " + distancia);
                         //getWindow().getDecorView().setBackgroundColor(Color.GREEN);
@@ -132,11 +138,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         // horas = 0;
                         //tvContadorProximidad.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
                     }
-                }
+                }*/
 
 
-                // Sensor ACELERÓMETRO
-                if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                    // Sensor ACELERÓMETRO
+                /*if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                     float x = sensorEvent.values[0];
                     float y = sensorEvent.values[1];
                     float z = sensorEvent.values[2];
@@ -150,19 +156,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         getWindow().getDecorView().setBackgroundColor(Color.GREEN);
                     }
 
+                }*/
+
+
                 }
 
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int i) {
 
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
-
-            }
-        };
-        startProximidad();
-        startLuz();
-        startAcelerometro();
+                }
+            };
+            startProximidad();
+            startLuz();
+            startAcelerometro();
+        }
     }
     public void startProximidad(){
         sm.registerListener(sensorEventListener, sensorProximidad, 1000*1000);
@@ -190,19 +197,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    protected void onPause() {
+    public void onStop() {
         stopProximidad();
         stopLuz();
         stopAcelerometro();
-        super.onPause();
+        super.onStop();
     }
 
     @Override
-    protected void onResume() {
+    public void onStart() {
         startProximidad();
         startLuz();
         startAcelerometro();
-        super.onResume();
+        super.onStart();
     }
 
     @Override
