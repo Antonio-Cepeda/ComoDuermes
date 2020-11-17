@@ -3,174 +3,140 @@ package com.example.comoduermes.Actividades;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.comoduermes.R;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     // TextViews
-    TextView tvLuz;
-    TextView tvProximidad;
-    TextView tvContadorLuz;
-    TextView tvContadorProximidad;
-    TextView tvAcelerometro;
+    TextView tvResultado, tvResultadoLuz, tvResultadoAcelerometro;
+
+    // Botones
+    Button buttonStart, buttonStop, buttonCuestionario;
 
     // Sensores
     SensorManager sm;
-    Sensor sensorProximidad;
-    Sensor sensorLuz;
-    Sensor sensorAcelerometro;
-
+    Sensor sensorProximidad, sensorLuz, sensorAcelerometro;
     SensorEventListener sensorEventListener;
 
     // Variables
-    int segundos, minutos, horas = 0;
-    Calendar calendario = Calendar.getInstance();
     static List<LocalTime> historialLuzEncendida = new ArrayList<LocalTime>();
     static List<LocalTime> historialLuzApagada = new ArrayList<LocalTime>();
+    //static List<LocalTime> historialProximidadCercana = new ArrayList<LocalTime>();
+    //static List<LocalTime> historialProximidadLejana = new ArrayList<LocalTime>();
+    static List<LocalTime> historialAcelerometroMovido = new ArrayList<LocalTime>();
+    static List<LocalTime> historialAcelerometroParado = new ArrayList<LocalTime>();
 
-    static float lux;
+    long duracionTotal, duracionLuz, duracionAcelerometro, horasLuz, minutosLuz, segundosLuz;
+
+    // Intents
+    Intent i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Sensores
-        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorProximidad = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        sensorLuz = sm.getDefaultSensor(Sensor.TYPE_LIGHT);
-        sensorAcelerometro = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        CrearVariables();
+        HaySensores();
+        buttonCuestionario.setEnabled(false);
 
-        // TextViews
-        tvLuz = findViewById(R.id.textoLuz);
-        tvProximidad = findViewById(R.id.textoProximidad);
-        tvContadorLuz = findViewById(R.id.textoContadorLuz);
-        tvContadorProximidad = findViewById(R.id.textoContadorProximidad);
-        tvAcelerometro = findViewById(R.id.textoAcelerometro);
+       // Desarrollo del código
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                sensorEventListener = new SensorEventListener() {
 
-        // Por si no existen los sensores
-       /*if (sensorAcelerometro == null)
-           System.out.print("no hay sensor");
-           
-           if (sensorLuz == null)
-           System.out.print("no hay sensor");
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onSensorChanged(SensorEvent sensorEvent) {
 
-           if (sensorProximidad == null)
-           System.out.print("no hay sensor");*/
-
-
-        if (MainActivity2.funcionando == true) {
-
-            sensorEventListener = new SensorEventListener() {
-
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void onSensorChanged(SensorEvent sensorEvent) {
-
-                    // Sensor LUZ
-                    if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-                        lux = sensorEvent.values[0];
-                        if (sensorEvent.values[0] < 15) {
-                            tvLuz.setText("Numero de luxes:" + lux);
-                            //historialLuzApagada.add(LocalTime.now());
-                            //getWindow().getDecorView().setBackgroundColor(Color.BLUE);
-
-                       /*segundos++;
-                        if (segundos == 60) {
-                            segundos = 0;
-                            minutos += 1;
+                        // Sensor LUZ
+                        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+                            //lux = sensorEvent.values[0];
+                            if (sensorEvent.values[0] < 5) {
+                                historialLuzApagada.add(LocalTime.now());
+                            } else {
+                                historialLuzEncendida.add(LocalTime.now());
+                            }
                         }
-                        if (minutos == 60) {
-                            minutos = 0;
-                            horas += 1;
+
+
+                        // Sensor PROXIMIDAD
+                        /*if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                           if (sensorEvent.values[0] < 3.5) {
+                                historialProximidadCercana.add(LocalTime.now());
+                            } else {
+                                historialProximidadLejana.add(LocalTime.now());
+                            }
+                        }*/
+
+
+                        //Sensor ACELERÓMETRO
+                        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                            float x = sensorEvent.values[0];
+                            float y = sensorEvent.values[1];
+                            float z = sensorEvent.values[2];
+
+                            if (x<1.5 && x>-1.5 && y>-1.5 && y<1.5 && z>9  && z<11){
+                                historialAcelerometroParado.add(LocalTime.now());
+                            }else {
+                                historialAcelerometroMovido.add(LocalTime.now());
+                            }
                         }
-                       tvContadorLuz.setText();*/
-                        } else {
-                            tvLuz.setText("Numero de luxes: " + lux);
-                            //historialLuzEncendida.add(LocalTime.now());
-                            //getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-                            //segundos = 0;
-                            // minutos = 0;
-                            // horas = 0;
-                            //tvContadorLuz.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
-                        }
-                    }
-                    //tvContadorLuz.setText("La luz se ha encendido a las: " + historialLuzEncendida.get(0) + " La luz se ha pagado a las: " + historialLuzApagada.get(0));
 
 
-                    // Sensor PROXIMIDAD
-               /* if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                    float distancia = sensorEvent.values[0];
-                    if (sensorEvent.values[0] < 3.5) {
-                        tvProximidad.setText("Numero de cm: " + distancia);
-                        //getWindow().getDecorView().setBackgroundColor(Color.BLUE);
-
-                        segundos++;
-                        if (segundos == 60) {
-                            segundos = 0;
-                            minutos += 1;
-                        }
-                        if (minutos == 60) {
-                            minutos = 0;
-                            horas += 1;
-                        }
-                        tvContadorProximidad.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
-                    } else {
-                        tvProximidad.setText("Numero de cm: " + distancia);
-                        //getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-                        // segundos = 0;
-                        //minutos = 0;
-                        // horas = 0;
-                        //tvContadorProximidad.setText(horas + " horas " + minutos + " minutos " + segundos + " segundos");
-                    }
-                }*/
-
-
-                    // Sensor ACELERÓMETRO
-                /*if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                    float x = sensorEvent.values[0];
-                    float y = sensorEvent.values[1];
-                    float z = sensorEvent.values[2];
-                    getWindow().getDecorView().setBackgroundColor(Color.RED);
-
-                    if (x<1.5 && x>-1.5 && y>-1.5 && y<1.5 && z>9  && z<11){
-                        tvAcelerometro.setText("El móvil está parado");
-                        getWindow().getDecorView().setBackgroundColor(Color.BLUE);
-                    }else {
-                        tvAcelerometro.setText("Estás moviendo el móvil");
-                        getWindow().getDecorView().setBackgroundColor(Color.GREEN);
                     }
 
-                }*/
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int i) {}
+                };
+                onStart();
+            }
+        });
 
+        buttonStop.setOnClickListener(new View.OnClickListener() {
 
-                }
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                onStop();
+                DuracionMedia(tvResultado, historialLuzApagada.get(0), historialLuzEncendida.get(0), historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
+                //Duracion(tvResultadoLuz, historialLuzApagada.get(0), historialLuzEncendida.get(0));
+                //Duracion(tvResultadoAcelerometro, historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
+                buttonCuestionario.setEnabled(true);
+            }
+        });
 
-                @Override
-                public void onAccuracyChanged(Sensor sensor, int i) {
+        buttonCuestionario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(i);
+            }
+        });
 
-                }
-            };
-            startProximidad();
-            startLuz();
-            startAcelerometro();
-        }
     }
+
     public void startProximidad(){
         sm.registerListener(sensorEventListener, sensorProximidad, 1000*1000);
     }
@@ -213,12 +179,110 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-
-    }
+    public void onSensorChanged(SensorEvent sensorEvent) {}
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 
+    public void CrearVariables(){
+        // Sensores
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorProximidad = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        sensorLuz = sm.getDefaultSensor(Sensor.TYPE_LIGHT);
+        sensorAcelerometro = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        // TextViews
+        tvResultado = findViewById(R.id.tvResultado);
+        //tvResultadoLuz = findViewById(R.id.tvResultadoLuz);
+        //tvResultadoAcelerometro = findViewById(R.id.tvResultadoAcelerometro);
+
+        // Botones
+        buttonStart = findViewById(R.id.ButtonStart);
+        buttonStop = findViewById(R.id.ButtonStop);
+        buttonCuestionario = findViewById(R.id.ButtonCuestionario);
+
+        // Intents
+        i = new Intent(MainActivity.this, Cuestionario.class);
+    }
+
+    public void HaySensores(){
+        // Por si no existen los sensores
+        if (sensorAcelerometro == null)
+            System.out.print("No hay sensor acelerómetro");
+
+        if (sensorLuz == null)
+            System.out.print("No hay sensor de Luz");
+
+        if (sensorProximidad == null)
+            System.out.print("No hay sensor de Proximidad");
+    }
+
+    /*
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void Duracion(TextView tv, LocalTime inicio1, LocalTime fin1){
+        long segundos, minutos = 0, horas = 0;
+        String NumSeg, NumMin, NumH;
+        segundos = ChronoUnit.SECONDS.between(inicio1, fin1);
+
+
+        if(segundos == 60) {
+            minutos += minutos;
+            segundos = 0;
+        }
+
+        if(minutos == 60) {
+            horas += horas;
+            minutos = 0;
+        }
+
+        NumSeg = segundos + " seg";
+        NumMin = minutos + " min ";
+        NumH = horas + " h ";
+
+        if(horas < 9)
+            NumH = "0" + horas + " h ";
+
+        if(minutos < 9)
+            NumMin = "0" + minutos + " min ";
+
+        if (segundos < 9)
+            NumSeg = "0" + segundos + " seg";
+
+        tv.setText("Has dormido: " + NumH + NumMin + NumSeg);
+    }*/
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void DuracionMedia(TextView tv, LocalTime inicio1, LocalTime fin1, LocalTime inicio2, LocalTime fin2){
+        long segundos, minutos = 0, horas = 0, duracion1, duracion2;
+        String NumSeg, NumMin, NumH;
+        duracion1 = ChronoUnit.SECONDS.between(inicio1, fin1);
+        duracion2 = ChronoUnit.SECONDS.between(inicio2, fin2);
+
+        segundos = (duracion1 + duracion2)/2;
+
+        if(segundos == 60) {
+            minutos += minutos;
+            segundos = 0;
+        }
+
+        if(minutos == 60) {
+            horas += horas;
+            minutos = 0;
+        }
+
+        NumSeg = segundos + " seg";
+        NumMin = minutos + " min ";
+        NumH = horas + " h ";
+
+        if(horas < 9)
+            NumH = "0" + horas + " h ";
+
+        if(minutos < 9)
+            NumMin = "0" + minutos + " min ";
+
+        if (segundos < 9)
+            NumSeg = "0" + segundos + " seg";
+
+        tv.setText("Has dormido: " + NumH + NumMin + NumSeg);
     }
 }

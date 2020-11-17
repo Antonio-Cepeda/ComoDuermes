@@ -1,5 +1,36 @@
 <resources>
     <string name="app_name">ComoDuermes</string>
+
+    // Nombre Botones
     <string name="ButtonStart">Empiezo a dormir</string>
     <string name="ButtonStop">Dejo de dormir</string>
+    <string name="ButtonCuestionario">Acceder al cuestionario</string>
+    <string name="ButtonVolver">Volver</string>
+    <string name="ButtonEnviar">Enviar</string>
+    <string name="ButtonMenuPrincipal">Menú Principal</string>
+
+    // Respuestas cuestionario
+    <string name="RespuestaExcelente">Excelente</string>
+    <string name="RespuestaBuena">Buena</string>
+    <string name="RespuestaRegular">Regular</string>
+    <string name="RespuestaMala">Mala</string>
+    <string name="RespuestaFatal">Fatal</string>
+
+    <string name="RespuestaMenos4">Menos de 4</string>
+    <string name="Respuesta46">De 4 a 6</string>
+    <string name="Respuesta68">De 6 a 8</string>
+    <string name="Respuesta810">De 8 a 10</string>
+    <string name="RespuestaMas10">Más de 10</string>
+
+    <string name="Respuesta3.1">Ninguna</string>
+    <string name="Respuesta3.2">Una</string>
+    <string name="Respuesta3.3">Dos</string>
+    <string name="Respuesta3.4">Tres</string>
+    <string name="Respuesta3.5">Más de tres</string>
+
+    // Preguntas cuestionario
+    <string name="Pregunta1">¿Cómo calificarías la forma en la que has dormido?</string>
+    <string name="Pregunta2">¿Cuántas horas has dormido?</string>
+    <string name="Pregunta3">¿Cuántas veces te has despertado a lo largo de la noche?</string>
+
 </resources>

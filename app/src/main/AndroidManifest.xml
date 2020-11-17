@@ -9,14 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ComoDuermes">
-        <activity android:name=".Actividades.MainActivity2">
+        <activity android:name=".Actividades.MainActivity"></activity>
+        <activity android:name=".Actividades.Comparacion" />
+        <activity android:name=".Actividades.Cuestionario" />
+        <activity android:name=".Actividades.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Actividades.MainActivity"></activity>
     </application>
 
 </manifest>

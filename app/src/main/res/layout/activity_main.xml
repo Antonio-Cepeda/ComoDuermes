@@ -10,44 +10,56 @@
 
     <TextView android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/textoLuz"
+        android:id="@+id/tvResultado"
         android:textSize="24sp"
         android:textColor="#050505"
-        android:layout_marginTop="150dp"/>
+        android:layout_marginTop="100dp"/>
 
+    <!--
     <TextView android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/textoContadorLuz"
+        android:id="@+id/tvResultadoLuz"
         android:textSize="24sp"
         android:textColor="#050505"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="10dp"/>
+    -->
 
+    <!--
     <TextView android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/textoProximidad"
+        android:id="@+id/tvResultadoAcelerometro"
         android:textSize="24sp"
         android:textColor="#050505"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="10dp"/>
+        -->
 
-    <TextView android:layout_height="wrap_content"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/textoContadorProximidad"
-        android:textSize="24sp"
-        android:textColor="#050505"
-        android:layout_marginTop="50dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:orientation="horizontal">
 
-    <TextView android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/ButtonStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ButtonStart" />
+
+        <Button
+            android:id="@+id/ButtonStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/ButtonStop" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/ButtonCuestionario"
         android:layout_width="match_parent"
-        android:id="@+id/textoAcelerometro"
-        android:textSize="24sp"
-        android:textColor="#050505"
-        android:layout_marginTop="50dp"/>
-
-    <TextView android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/textoGiroscopio"
-        android:textSize="24sp"
-        android:textColor="#050505"
-        android:layout_marginTop="50dp"/>
-
+        android:layout_height="wrap_content"
+        android:text="@string/ButtonCuestionario"
+        android:layout_marginTop="50dp"
+        android:textColor="#070707"
+        app:backgroundTint="#CACACA" />
 </LinearLayout>
+
