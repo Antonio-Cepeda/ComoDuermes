@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.comoduermes.R;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     // TextViews
-    TextView tvResultado, tvResultadoLuz, tvResultadoAcelerometro;
+    static TextView tvResultado;
+    TextView tvResultadoLuz;
+    TextView tvResultadoAcelerometro;
 
     // Botones
     Button buttonStart, buttonStop, buttonCuestionario;
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     long duracionTotal, duracionLuz, duracionAcelerometro, horasLuz, minutosLuz, segundosLuz;
 
     // Intents
-    Intent i;
+    Intent iCuestionario, iSplash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                         // Sensor LUZ
                         if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-                            //lux = sensorEvent.values[0];
                             if (sensorEvent.values[0] < 5) {
                                 historialLuzApagada.add(LocalTime.now());
                             } else {
@@ -104,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 historialAcelerometroMovido.add(LocalTime.now());
                             }
                         }
-
-
                     }
 
                     @Override
@@ -121,17 +121,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View view) {
                 onStop();
-                DuracionMedia(tvResultado, historialLuzApagada.get(0), historialLuzEncendida.get(0), historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
-                //Duracion(tvResultadoLuz, historialLuzApagada.get(0), historialLuzEncendida.get(0));
-                //Duracion(tvResultadoAcelerometro, historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
-                buttonCuestionario.setEnabled(true);
+                try {
+                    DuracionMedia(tvResultado, historialLuzApagada.get(0), historialLuzEncendida.get(0), historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
+                    //Duracion(tvResultadoLuz, historialLuzApagada.get(0), historialLuzEncendida.get(0));
+                    //Duracion(tvResultadoAcelerometro, historialAcelerometroParado.get(0), historialAcelerometroMovido.get(0));
+                    buttonCuestionario.setEnabled(true);
+                    buttonStart.setEnabled(false);
+                    buttonStop.setEnabled(false);
+                } catch (Exception e){
+                    Snackbar.make(findViewById(R.id.coordinator), R.string.ErrorSensores, 3000).show();
+                    //hibernar(3);
+                    //startActivity(iSplash);
+                }
             }
         });
 
         buttonCuestionario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(i);
+                startActivity(iCuestionario);
             }
         });
 
@@ -202,7 +210,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         buttonCuestionario = findViewById(R.id.ButtonCuestionario);
 
         // Intents
-        i = new Intent(MainActivity.this, Cuestionario.class);
+        iCuestionario = new Intent(MainActivity.this, Cuestionario.class);
+        iSplash = new Intent(MainActivity.this, Splash.class);
     }
 
     public void HaySensores(){
@@ -252,23 +261,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }*/
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void DuracionMedia(TextView tv, LocalTime inicio1, LocalTime fin1, LocalTime inicio2, LocalTime fin2){
+    public static void DuracionMedia(TextView tv, LocalTime inicio1, LocalTime fin1, LocalTime inicio2, LocalTime fin2) {
         long segundos, minutos = 0, horas = 0, duracion1, duracion2;
         String NumSeg, NumMin, NumH;
+
         duracion1 = ChronoUnit.SECONDS.between(inicio1, fin1);
         duracion2 = ChronoUnit.SECONDS.between(inicio2, fin2);
 
-        segundos = (duracion1 + duracion2)/2;
 
-        if(segundos == 60) {
-            minutos += minutos;
+        segundos = (duracion1 + duracion2) / 2;
+
+        horas = segundos / 3600;
+        minutos = (segundos - (horas * 3600)) / 60;
+        segundos = segundos - (horas * 3600) - (minutos * 3600);
+
+        if (segundos<0)
             segundos = 0;
-        }
-
-        if(minutos == 60) {
-            horas += horas;
-            minutos = 0;
-        }
 
         NumSeg = segundos + " seg";
         NumMin = minutos + " min ";
@@ -284,5 +292,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             NumSeg = "0" + segundos + " seg";
 
         tv.setText("Has dormido: " + NumH + NumMin + NumSeg);
+    }
+
+    public void hibernar(int tiemposegundos){
+        try{
+            Thread.sleep(tiemposegundos*1000);
+            startActivity(iSplash);
+        }catch(Exception e) {
+            tvResultado.setText("TerribleFallo");
+        }
     }
 }
